@@ -11,7 +11,7 @@ import {
   BulkDeleteRequest
 } from '@/types/brandTypes';
 
-const API_BASE_URL ="https://tareeq-ul-shifa-server-three.vercel.app/api/v1"
+const API_BASE_URL ="https://api.tareequlshifa.com/api/v1"
 const BRAND_API_URL = `${API_BASE_URL}/brand`;
 
 // Create a new brand

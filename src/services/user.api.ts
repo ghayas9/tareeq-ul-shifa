@@ -4,7 +4,7 @@
 
 // // Create axios instance
 // const api = axios.create({
-//   baseURL: 'https://tareeq-ul-shifa-server-three.vercel.app/api/v1',
+//   baseURL: 'https://api.tareequlshifa.com/api/v1',
 //   headers: {
 //     'Content-Type': 'application/json',
 //   },

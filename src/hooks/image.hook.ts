@@ -28,7 +28,7 @@ export const useImage = () => {
       }
 
       const response = await axios.post(
-        'https://tareeq-ul-shifa-server-three.vercel.app/api/v1/upload',
+        'https://api.tareequlshifa.com/api/v1/upload',
         formData,
         {
           headers: {
@@ -65,7 +65,7 @@ export const useImage = () => {
   const deleteImage = async (imageId: string) => {
     try {
       await axios.delete(
-        `https://tareeq-ul-shifa-server-three.vercel.app/api/v1/images/${imageId}`
+        `https://api.tareequlshifa.com/api/v1/images/${imageId}`
       );
       return true;
     } catch (error) {
