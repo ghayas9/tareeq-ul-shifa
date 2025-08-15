@@ -5,6 +5,7 @@ import {
   FaSignOutAlt,
   FaLongArrowAltRight,
 } from 'react-icons/fa';
+import { MdLocalPharmacy, MdMedicalServices } from 'react-icons/md';
 import { LuLayoutDashboard } from 'react-icons/lu';
 import { MdBusiness, MdPersonOutline } from 'react-icons/md';
 import { PiSealPercent } from 'react-icons/pi';
@@ -245,24 +246,24 @@ const Sidebar = ({ isMobileOpen, setIsMobileOpen }: any) => {
               )}
             </Link>
 
-            {/* <Link
-              href="/admin/customers"
+            <Link
+              href="/admin/prescription"
               className={`flex items-center p-2 rounded-lg ${
-                isActive('/admin/customers') ? 'bg-Aqua' : 'hover:bg-gray-100'
+                isActive('/admin/prescription') ? 'bg-Aqua' : 'hover:bg-gray-100'
               }`}
               onClick={closeMobileSidebar}
             >
-              <MdPersonOutline className="text-2xl" />
+              <MdLocalPharmacy className="text-2xl" />
               {(isOpen || isMobileOpen) && (
                 <span
                   className={`ml-2 ${
-                    isActive('/admin/customers') ? 'text-primary' : ''
+                    isActive('/admin/prescription') ? 'text-primary' : ''
                   }`}
                 >
-                  Customers
+                  Prescription
                 </span>
               )}
-            </Link> */}
+            </Link>
             <div>
               <button
                 onClick={() =>

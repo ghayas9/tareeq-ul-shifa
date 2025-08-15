@@ -239,16 +239,11 @@ const PrescriptionUploadModal: React.FC<PrescriptionUploadModalProps> = ({
         url: prescriptionImage,
         sessionId
       });
-      
-      // Show success message
-      toast.success('Prescription uploaded successfully');
-      
-      // Reset form and close modal
+
       reset();
       setPrescriptionImage(null);
       onClose();
       
-      // Call onSuccess callback if provided
       if (onSuccess) {
         onSuccess();
       }
