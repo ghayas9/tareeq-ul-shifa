@@ -6,35 +6,40 @@ import { useCart } from '@/hooks/cart.hook';
 import { toggleCartSidebar } from '@/redux/slices/cartSlice';
 import { useDispatch } from 'react-redux';
 import toast from 'react-hot-toast';
+import Link from 'next/link';
 
 const TopSellingCard = ({ product }: any) => {
-  console.log(product,"pro")
+  console.log(product, 'pro');
   const dispatch = useDispatch();
   const { addItemToCart } = useCart();
   const discount = calculateDiscount(product.originalPrice, product.price);
-  
+
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault();
-    
+
     if (product.stock === 0) {
       toast.error('This product is out of stock');
       return;
     }
-    
+
     try {
-    const res=  await addItemToCart({
+      const res = await addItemToCart({
         productId: product.id,
-        quantity: 1
+        quantity: 1,
       });
-      console.log(res,"rrr")
+      console.log(res, 'rrr');
       dispatch(toggleCartSidebar());
     } catch (error) {
       console.error('Failed to add item to cart:', error);
     }
   };
-  
+
   return (
-    <div key={product.id} className="px-[6px] w-full">
+    <Link
+      href={'/products/' + product?.id}
+      key={product.id}
+      className="px-[6px] w-full"
+    >
       <div className="relative group">
         <div className="flex relative p-4 rounded-[10px] hover:shadow-xl shadow-sm h-[218px] justify-center items-center bg-white">
           {product.stock === 0 && (
@@ -72,7 +77,7 @@ const TopSellingCard = ({ product }: any) => {
           </span>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

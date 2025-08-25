@@ -20,9 +20,12 @@ const schema = z.object({
   name: z.string().min(3, 'Product name must be at least 3 characters long'),
   categoryId: z.string().min(1, 'Category is required'),
   brand: z.string().min(1, 'Brand is required'),
-  sku: z.string().min(1, 'SKU is required'),
+  sku: z.string().optional().nullable(),
   price: z.string().min(1, 'Sale Price is required'),
-  originPrice: z.string().min(1, 'Regular Price is required'),
+  originPrice: z
+    .string()
+    .optional()
+    .nullable(),
   description: z.string().optional(),
   status: z.enum(['pending', 'inactive', 'active']).default('pending'),
 });
@@ -132,7 +135,9 @@ function EditProduct() {
         id: productId as string,
         ...data,
         price: parseFloat(data.price),
-        originPrice: parseFloat(data.originPrice),
+        ...(data.originPrice
+          ? { originPrice: parseFloat(data.originPrice) }
+          : {}),
         image: productImage,
       };
 
@@ -232,7 +237,7 @@ function EditProduct() {
                 <Input
                   type="text"
                   label="SKU"
-                  required={true}
+                  required={false}
                   errors={errors}
                   placeholder=""
                   name="sku"
@@ -242,7 +247,7 @@ function EditProduct() {
                 <Input
                   type="text"
                   label="Regular Price"
-                  required={true}
+                  required={false}
                   errors={errors}
                   placeholder=""
                   name="originPrice"

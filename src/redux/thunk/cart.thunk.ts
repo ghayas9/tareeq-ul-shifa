@@ -1,10 +1,7 @@
 // src/redux/thunk/cart.thunk.ts
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { cartApi } from '../../services/cart.api';
-import { 
-  AddToCartData, 
-  ApplyCouponData,
-} from '../../types/cartTypes';
+import { AddToCartData, ApplyCouponData } from '../../types/cartTypes';
 import toast from 'react-hot-toast';
 
 // Fetch cart
@@ -29,10 +26,11 @@ export const addToCart = createAsyncThunk(
   async (data: AddToCartData, { rejectWithValue }) => {
     try {
       const response = await cartApi.addToCart(data);
-      toast.success('Item added to cart');
       return response;
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to add item to cart');
+      toast.error(
+        error.response?.data?.message || 'Failed to add item to cart'
+      );
       return rejectWithValue(
         error.response?.data?.message || 'Failed to add item to cart'
       );
@@ -51,7 +49,9 @@ export const updateCartItem = createAsyncThunk(
       const response = await cartApi.updateCartItem(cartItemId, { quantity });
       return response;
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to update item quantity');
+      toast.error(
+        error.response?.data?.message || 'Failed to update item quantity'
+      );
       return rejectWithValue(
         error.response?.data?.message || 'Failed to update item quantity'
       );
@@ -68,7 +68,9 @@ export const removeFromCart = createAsyncThunk(
       toast.success('Item removed from cart');
       return response;
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to remove item from cart');
+      toast.error(
+        error.response?.data?.message || 'Failed to remove item from cart'
+      );
       return rejectWithValue(
         error.response?.data?.message || 'Failed to remove item from cart'
       );

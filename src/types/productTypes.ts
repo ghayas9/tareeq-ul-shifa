@@ -35,9 +35,9 @@ export interface CreateProductData {
   categoryId: string;
   name: string;
   brand: string;
-  sku: string;
+  sku?: string | null | undefined;
   price: number;
-  originalPrice?: number | null;
+  originalPrice?: number | null | undefined;
   image?: string | null;
   status?: 'pending' | 'inactive' | 'active';
   description?: string | null;

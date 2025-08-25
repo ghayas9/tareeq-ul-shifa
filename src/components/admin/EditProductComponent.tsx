@@ -18,9 +18,9 @@ const schema = z.object({
   name: z.string().min(3, 'Product name must be at least 3 characters long'),
   categoryId: z.string().min(1, 'Category is required'),
   brand: z.string().min(1, 'Brand is required'),
-  sku: z.string().min(1, 'SKU is required'),
+  sku: z.string().optional().nullable(),
   price: z.string().min(1, 'Sale Price is required'),
-  originalPrice: z.string().min(1, 'Regular Price is required'),
+  originalPrice: z.string().optional().nullable(),
   description: z.string().optional(),
   status: z.enum(['pending', 'inactive', 'active']).default('pending'),
   ingredients: z.string().optional(),
@@ -52,7 +52,7 @@ const EditProductForm: React.FC<EditProductProps> = ({
   const [categoryError, setCategoryError] = useState<string | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
   const [isInitializing, setIsInitializing] = useState(true);
-  const [selectedBrandId, setSelectedBrandId] = useState<string>(''); 
+  const [selectedBrandId, setSelectedBrandId] = useState<string>('');
   const { editProduct, isLoading, error, clearError } = useProduct();
   const brandState = useBrand();
   const getAllBrands = brandState.getAllBrands;
@@ -89,9 +89,9 @@ const EditProductForm: React.FC<EditProductProps> = ({
   };
 
   useEffect(() => {
-    setSelectedBrandId(product?.brandId)
-     console.log(product.brandId,"ppp")
-   }, []);
+    setSelectedBrandId(product?.brandId);
+    console.log(product.brandId, 'ppp');
+  }, []);
   useEffect(() => {
     const initializeForm = async () => {
       try {
@@ -115,11 +115,11 @@ const EditProductForm: React.FC<EditProductProps> = ({
         value: category.id,
       }))
     : [];
-    const brandOptions = Array.isArray(brands)
+  const brandOptions = Array.isArray(brands)
     ? brands.map((brand: any) => ({
-      label: brand.name,
-      value: brand.id,
-    }))
+        label: brand.name,
+        value: brand.id,
+      }))
     : [];
 
   const handleCategorySelect = (value: string) => {
@@ -153,7 +153,10 @@ const EditProductForm: React.FC<EditProductProps> = ({
       const productData = {
         ...data,
         price: parseFloat(data.price),
-        originalPrice: parseFloat(data.originalPrice),
+        ...(data.originalPrice
+          ? { originalPrice: parseFloat(data.originalPrice) }
+          : {}),
+
         quantity: data.quantity ? parseInt(data.quantity) : null,
         image: productImage,
       };
@@ -223,35 +226,37 @@ const EditProductForm: React.FC<EditProductProps> = ({
               </div>
 
               <div className="flex-1">
-                  <label className="block text-sm font-robotoSlab mb-1">
-                    Brand <span className="text-red-700">*</span>
-                  </label>
-                  <Dropdown
-                    options={brandOptions}
-                    placeholder="Select Brand"
-                    onSelect={handleBrandSelect}
-                    className="mt-0"
-                    dropdownClassName="border-CloudGray"
-                    optionlabelClassName="font-robotoSlab"
-                    optionClassName="text-sm font-robotoSlab"
-                    selectedValue={selectedBrandId}
-                  />
-                  <input
-                    type="hidden"
-                    {...register('brand')}
-                    value={selectedBrandId}
-                  />
-                  {errors.brand && (
-                    <p className="text-red-500 text-xs mt-1">{errors.brand.message}</p>
-                  )}
-                </div>
+                <label className="block text-sm font-robotoSlab mb-1">
+                  Brand <span className="text-red-700">*</span>
+                </label>
+                <Dropdown
+                  options={brandOptions}
+                  placeholder="Select Brand"
+                  onSelect={handleBrandSelect}
+                  className="mt-0"
+                  dropdownClassName="border-CloudGray"
+                  optionlabelClassName="font-robotoSlab"
+                  optionClassName="text-sm font-robotoSlab"
+                  selectedValue={selectedBrandId}
+                />
+                <input
+                  type="hidden"
+                  {...register('brand')}
+                  value={selectedBrandId}
+                />
+                {errors.brand && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.brand.message}
+                  </p>
+                )}
+              </div>
             </div>
 
             <div className="flex sm:flex-row flex-col gap-4 py-3">
               <Input
                 type="text"
                 label="SKU"
-                required={true}
+                required={false}
                 errors={errors}
                 placeholder=""
                 name="sku"
@@ -261,7 +266,7 @@ const EditProductForm: React.FC<EditProductProps> = ({
               <Input
                 type="text"
                 label="Regular Price"
-                required={true}
+                required={false}
                 errors={errors}
                 placeholder=""
                 name="originalPrice"
@@ -366,9 +371,7 @@ const EditProductForm: React.FC<EditProductProps> = ({
                 initialImage={productImage}
               />
               {imageError && (
-                <p className="text-red-500 text-xs mt-1">
-                  {imageError}
-                </p>
+                <p className="text-red-500 text-xs mt-1">{imageError}</p>
               )}
             </div>
           </div>

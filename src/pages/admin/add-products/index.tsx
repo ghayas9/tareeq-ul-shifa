@@ -373,7 +373,6 @@
 
 // export default AddProducts;
 
-
 import React, { useState, useEffect } from 'react';
 import * as z from 'zod';
 import { useForm } from 'react-hook-form';
@@ -396,9 +395,9 @@ const schema = z.object({
   name: z.string().min(3, 'Product name must be at least 3 characters long'),
   categoryId: z.string().min(1, 'Category is required'),
   brand: z.string().min(1, 'Brand is required'),
-  sku: z.string().min(1, 'SKU is required'),
+  sku: z.string().optional().nullable(),
   price: z.string().min(1, 'Sale Price is required'),
-  originalPrice: z.string().min(1, 'Regular Price is required'),
+  originalPrice: z.string().optional().nullable(),
   description: z.string().optional(),
   status: z.enum(['pending', 'inactive', 'active']).default('pending'),
   ingredients: z.string().optional(),
@@ -462,16 +461,16 @@ function AddProducts() {
 
   const categoryOptions = Array.isArray(categories)
     ? categories.map((category: any) => ({
-      label: category.name,
-      value: category.id,
-    }))
+        label: category.name,
+        value: category.id,
+      }))
     : [];
 
   const brandOptions = Array.isArray(brands)
     ? brands.map((brand: any) => ({
-      label: brand.name,
-      value: brand.id,
-    }))
+        label: brand.name,
+        value: brand.id,
+      }))
     : [];
 
   const handleCategorySelect = (value: string) => {
@@ -516,12 +515,15 @@ function AddProducts() {
         categoryId: selectedCategoryId,
         brand: selectedBrandId,
         price: parseFloat(data.price),
-        originalPrice: parseFloat(data.originalPrice),
+        ...(data.originalPrice
+          ? { originalPrice: parseFloat(data.originalPrice) }
+          : {}),
+
         image: productImage,
         quantity: data.quantity ? parseInt(data.quantity) : null,
       };
 
-      const response = await addProduct(productData);
+      const response = await addProduct(productData as any);
       console.log('Product creation response:', response);
       router.push('/admin/product-management');
     } catch (err: any) {
@@ -606,7 +608,9 @@ function AddProducts() {
                     value={selectedBrandId}
                   />
                   {errors.brand && (
-                    <p className="text-red-500 text-xs mt-1">{errors.brand.message}</p>
+                    <p className="text-red-500 text-xs mt-1">
+                      {errors.brand.message}
+                    </p>
                   )}
                 </div>
               </div>
