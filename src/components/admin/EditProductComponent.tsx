@@ -73,7 +73,7 @@ const EditProductForm: React.FC<EditProductProps> = ({
       brand: product?.brandId || '',
       sku: product?.sku || '',
       price: product?.price?.toString() || '',
-      originalPrice: product?.originalPrice?.toString() || '',
+      originalPrice: product?.originalPrice?.toString() || null,
       description: product?.description || '',
       status: product?.status || 'pending',
       ingredients: product?.ingredients || '',
@@ -150,12 +150,13 @@ const EditProductForm: React.FC<EditProductProps> = ({
         toast.error('Cannot update product: Missing ID');
         return;
       }
+      const { originalPrice, ...rest } = data;
       const productData = {
-        ...data,
+        ...rest,
         price: parseFloat(data.price),
         ...(data.originalPrice
           ? { originalPrice: parseFloat(data.originalPrice) }
-          : {}),
+          : { originalPrice: null }),
 
         quantity: data.quantity ? parseInt(data.quantity) : null,
         image: productImage,

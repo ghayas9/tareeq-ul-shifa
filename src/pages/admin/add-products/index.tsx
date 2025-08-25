@@ -510,14 +510,15 @@ function AddProducts() {
       }
 
       clearError();
+      const { originalPrice, ...rest } = data;
       const productData = {
-        ...data,
+        ...rest,
         categoryId: selectedCategoryId,
         brand: selectedBrandId,
         price: parseFloat(data.price),
         ...(data.originalPrice
           ? { originalPrice: parseFloat(data.originalPrice) }
-          : {}),
+          : { originalPrice: null }),
 
         image: productImage,
         quantity: data.quantity ? parseInt(data.quantity) : null,

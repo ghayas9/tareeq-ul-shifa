@@ -22,10 +22,7 @@ const schema = z.object({
   brand: z.string().min(1, 'Brand is required'),
   sku: z.string().optional().nullable(),
   price: z.string().min(1, 'Sale Price is required'),
-  originPrice: z
-    .string()
-    .optional()
-    .nullable(),
+  originPrice: z.string().optional().nullable(),
   description: z.string().optional(),
   status: z.enum(['pending', 'inactive', 'active']).default('pending'),
 });
@@ -95,7 +92,7 @@ function EditProduct() {
       setValue('price', product.price.toString());
       setValue(
         'originPrice',
-        product.originalPrice ? product.originalPrice.toString() : ''
+        product.originalPrice ? product.originalPrice.toString() : null
       );
       setValue('status', product.status);
       setValue('description', product.description || '');
@@ -130,14 +127,16 @@ function EditProduct() {
       // Clear any previous errors
       clearError();
 
+      const {originPrice , ...rest} = data
+
       // Convert string values to numbers for prices
       const productData = {
         id: productId as string,
-        ...data,
+        ...rest,
         price: parseFloat(data.price),
         ...(data.originPrice
           ? { originPrice: parseFloat(data.originPrice) }
-          : {}),
+          : { originPrice: null }),
         image: productImage,
       };
 
