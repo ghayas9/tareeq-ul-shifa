@@ -127,7 +127,7 @@ function EditProduct() {
       // Clear any previous errors
       clearError();
 
-      const {originPrice , ...rest} = data
+      const { originPrice, ...rest } = data;
 
       // Convert string values to numbers for prices
       const productData = {

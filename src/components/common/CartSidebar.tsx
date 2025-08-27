@@ -201,11 +201,11 @@ const CartSidebar = () => {
                             <div className="flex items-center gap-2 mt-1 flex-wrap">
                               {originalPrice > 0 && (
                                 <p className="text-CoolGray text-sm font-medium font-robotoSlab line-through">
-                                  ${originalPrice.toFixed(2)}
+                                  Rs{originalPrice.toFixed(2)}
                                 </p>
                               )}
                               <p className="text-sm text-gray-500">
-                                ${itemPrice.toFixed(2)}
+                                Rs{itemPrice.toFixed(2)}
                               </p>
                               {discountPercentage > 0 && (
                                 <div className="relative mt-2">
@@ -266,7 +266,7 @@ const CartSidebar = () => {
                                   Total
                                 </span>
                                 <p className="font-medium">
-                                  ${totalPrice.toFixed(2)}
+                                  Rs{totalPrice.toFixed(2)}
                                 </p>
                               </div>
 
@@ -314,7 +314,7 @@ const CartSidebar = () => {
                   <div className="px-4 py-1 flex w-full justify-between items-center border-t">
                     <p className="text-l font-medium">Subtotal:</p>
                     <p className="text-primary text-xl font-medium">
-                      ${parsePrice(subtotal).toFixed(2)}
+                      Rs {parsePrice(subtotal).toFixed(2)}
                     </p>
                   </div>
 
@@ -322,7 +322,7 @@ const CartSidebar = () => {
                     <div className="px-4 py-1 flex w-full justify-between items-center text-green-600">
                       <p className="text-l font-medium">Discount:</p>
                       <p className="text-xl font-medium">
-                        -${parsePrice(cart.discountAmount).toFixed(2)}
+                        -Rs {parsePrice(cart.discountAmount).toFixed(2)}
                       </p>
                     </div>
                   )}
@@ -338,7 +338,7 @@ const CartSidebar = () => {
                   <div className="px-4 py-1 flex w-full justify-between items-center font-bold">
                     <p className="text-l">Total:</p>
                     <p className="text-primary text-xl">
-                      ${parsePrice(totalAmount).toFixed(2)}
+                      Rs {parsePrice(totalAmount).toFixed(2)}
                     </p>
                   </div>
 
