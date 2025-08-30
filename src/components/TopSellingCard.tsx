@@ -28,7 +28,7 @@ const TopSellingCard = ({ product }: any) => {
         quantity: 1,
       });
       console.log(res, 'rrr');
-      dispatch(toggleCartSidebar());
+      // dispatch(toggleCartSidebar());
     } catch (error) {
       console.error('Failed to add item to cart:', error);
     }

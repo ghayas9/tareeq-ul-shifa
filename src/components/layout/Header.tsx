@@ -180,20 +180,11 @@ const Header = () => {
 
           {/* Desktop Nav Items */}
           <motion.div
-            className="hidden md:flex items-center space-x-6"
+            className="hidden md:flex items-center space-x-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2, duration: 0.3 }}
           >
-            <div className="text-sm font-semibold font-robotoSlab">
-              <span>
-                Quantity:{' '}
-                <span className="text-primary">{cart?.totalItems || 0}</span> |{' '}
-                <span className="text-primary">
-                  Rs {parseFloat(cart?.totalAmount || 0).toFixed(0)}
-                </span>
-              </span>
-            </div>
             <motion.div
               className="relative"
               whileHover={{ scale: 1.1 }}
@@ -206,6 +197,12 @@ const Header = () => {
                 <CartIcon />
               </button>
             </motion.div>
+            <div className="text-sm font-semibold font-robotoSlab">
+                <span className="text-primary">
+                  Rs {parseFloat(cart?.totalAmount || 0).toFixed(0)}
+                </span>
+            </div>
+            
             {isAuthenticated ? (
               <ProfileDropdown
                 user={

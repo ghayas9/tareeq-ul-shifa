@@ -53,10 +53,12 @@ const EditProductForm: React.FC<EditProductProps> = ({
   const [imageError, setImageError] = useState<string | null>(null);
   const [isInitializing, setIsInitializing] = useState(true);
   const [selectedBrandId, setSelectedBrandId] = useState<string>('');
+  const [allBrands, setAllBrands] = useState<any[]>([]); // Store all brands locally
+
   const { editProduct, isLoading, error, clearError } = useProduct();
   const brandState = useBrand();
   const getAllBrands = brandState.getAllBrands;
-  const brands = brandState?.brands || [];
+  const meta = brandState?.meta; // Get meta data
 
   const { categories, getAllCategories } = useCategory();
 
@@ -83,6 +85,7 @@ const EditProductForm: React.FC<EditProductProps> = ({
       quantity: product?.quantity?.toString() || '',
     },
   });
+
   const handleBrandSelect = (value: string) => {
     setSelectedBrandId(value);
     setValue('brand', value);
@@ -92,16 +95,55 @@ const EditProductForm: React.FC<EditProductProps> = ({
     setSelectedBrandId(product?.brandId);
     console.log(product.brandId, 'ppp');
   }, []);
+
+  // Fetch all brands for dropdown
+  const fetchAllBrands = async () => {
+    try {
+      // First get total count of brands
+      const response = await getAllBrands({
+        page: 1,
+        limit: 1,
+        status: 'active',
+      });
+
+      let totalBrands = 10; // Default fallback
+
+      // Extract total from response or meta
+      if (response && typeof response === 'object' && 'total' in response) {
+        totalBrands = response.total;
+      } else if (meta?.total) {
+        totalBrands = meta.total;
+      }
+
+      console.log('Total brands found:', totalBrands);
+
+      // Now fetch all brands
+      const allBrandsResponse = await getAllBrands({
+        page: 1,
+        limit: totalBrands, // Use the total count as limit
+        status: 'active',
+      });
+
+      setAllBrands(allBrandsResponse?.data || [])
+
+      return allBrandsResponse;
+    } catch (error) {
+      console.error('Error fetching all brands:', error);
+      toast.error('Failed to load brands');
+      return null;
+    }
+  };
+
   useEffect(() => {
     const initializeForm = async () => {
       try {
         await getAllCategories();
-        await getAllBrands(); // Fetch brands
+        await fetchAllBrands(); // Fetch all brands instead of paginated
 
         setIsInitializing(false);
       } catch (error) {
         console.error('Error initializing form:', error);
-        toast.error('Failed to load categories');
+        toast.error('Failed to load form data');
         setIsInitializing(false);
       }
     };
@@ -115,8 +157,10 @@ const EditProductForm: React.FC<EditProductProps> = ({
         value: category.id,
       }))
     : [];
-  const brandOptions = Array.isArray(brands)
-    ? brands.map((brand: any) => ({
+
+  // Use allBrands instead of brands for dropdown options
+  const brandOptions = Array.isArray(allBrands)
+    ? allBrands.map((brand: any) => ({
         label: brand.name,
         value: brand.id,
       }))
@@ -168,6 +212,7 @@ const EditProductForm: React.FC<EditProductProps> = ({
       console.log(err);
     }
   };
+
   if (isInitializing) {
     return (
       <div className="flex items-center justify-center p-6 min-h-[300px]">
@@ -250,6 +295,10 @@ const EditProductForm: React.FC<EditProductProps> = ({
                     {errors.brand.message}
                   </p>
                 )}
+                {/* Debug info - remove in production */}
+                <p className="text-xs text-gray-500 mt-1">
+                  Total brands loaded: {allBrands.length}
+                </p>
               </div>
             </div>
 

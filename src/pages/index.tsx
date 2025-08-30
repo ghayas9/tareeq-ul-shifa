@@ -1,4 +1,3 @@
-
 'use client';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
@@ -10,7 +9,6 @@ import Layout from '@/components/layout/Layout';
 import NewItems from '@/components/NewItems';
 import PopularBrands from '@/components/PopularBrands';
 import TopSellingItems from '@/components/TopSellingItems';
-import PrescriptionUploadModal from '@/components/PrescriptionUploadModal';
 import { useProduct } from '@/hooks/product.hook';
 import { useCategory } from '@/hooks/category.hooks';
 import { useRouter } from 'next/router';
@@ -41,10 +39,18 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [topSellingProducts, setTopSellingProducts] = useState<any[]>([]);
   const [isTopSellingLoading, setIsTopSellingLoading] = useState(true);
-  const { getAllBrands, brands } = useBrand();
 
-  // Prescription upload modal state
-  const [showPrescriptionModal, setShowPrescriptionModal] = useState(false);
+  // Brand pagination states
+  const [brandsCurrentPage, setBrandsCurrentPage] = useState(1);
+  const [brandsItemsPerPage] = useState(12); // Show 12 brands per page
+  const [brandsPagination, setBrandsPagination] = useState<{
+    total: number;
+    totalPages: number;
+    currentPage: number;
+  } | null>(null);
+  const [isBrandsLoading, setIsBrandsLoading] = useState(true);
+
+  const { getAllBrands, brands } = useBrand();
 
   const [categoryLoadingStates, setCategoryLoadingStates] = useState<
     Record<string, boolean>
@@ -62,13 +68,35 @@ const Home = () => {
   } = useProduct();
   const { categories, getAllCategories } = useCategory();
 
+  // Fetch brands with pagination
   useEffect(() => {
     const getBrands = async () => {
-      await getAllBrands();
+      setIsBrandsLoading(true);
+      try {
+        const response = await getAllBrands({
+          page: brandsCurrentPage,
+          limit: brandsItemsPerPage,
+          status: 'active', // Only get active brands for homepage
+        });
+
+        // Extract pagination data from response if your API returns it
+        if (response && typeof response === 'object' && 'total' in response) {
+          setBrandsPagination({
+            total: response.total,
+            totalPages: response.totalPages,
+            currentPage: response?.page,
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching brands:', error);
+      } finally {
+        setIsBrandsLoading(false);
+      }
     };
-    console.log(brands, 'brands');
+
     getBrands();
-  }, []);
+  }, [brandsCurrentPage, brandsItemsPerPage]);
+
   useEffect(() => {
     const fetchInitialData = async () => {
       setIsLoading(true);
@@ -185,6 +213,12 @@ const Home = () => {
 
     fetchCategoryProducts();
   }, [categories, getProductsByCategory]);
+
+  // Brand pagination handlers
+  const handleBrandPageChange = (page: number) => {
+    setBrandsCurrentPage(page);
+  };
+
   const handleSearchChange = (value: string) => {
     setSearch(value);
 
@@ -234,14 +268,9 @@ const Home = () => {
     setSearch('');
   };
 
-  // Handle opening the prescription upload modal
-  const handleOpenPrescriptionModal = () => {
-    setShowPrescriptionModal(true);
-  };
-
-  // Handle closing the prescription upload modal
-  const handleClosePrescriptionModal = () => {
-    setShowPrescriptionModal(false);
+  // Handle prescription upload navigation
+  const handlePrescriptionUpload = () => {
+    router.push('/prescription');
   };
 
   const containerVariants = {
@@ -279,17 +308,6 @@ const Home = () => {
         damping: 10,
         delay: 0.2,
       },
-    },
-  };
-
-  // Button animation variants
-  const buttonVariants = {
-    hover: {
-      scale: 1.1,
-      boxShadow: '0px 5px 15px rgba(0, 0, 0, 0.1)',
-    },
-    tap: {
-      scale: 0.95,
     },
   };
 
@@ -402,6 +420,163 @@ const Home = () => {
     );
   };
 
+  // Render Popular Brands section with pagination
+  const renderPopularBrands = () => {
+    const totalBrands = brandsPagination?.total || 0;
+    const totalPages = brandsPagination?.totalPages || 1;
+    const currentPage = brandsPagination?.currentPage || brandsCurrentPage;
+
+    return (
+      <motion.div className="w-full mt-12 mx-auto" variants={itemVariants}>
+        <motion.h1
+          className="text-[28px] font-medium text-center"
+          variants={headingVariants}
+        >
+          Popular Brands
+        </motion.h1>
+
+        {/* Brands Grid */}
+        <motion.div
+          className="w-full flex flex-wrap justify-center px-4 my-8"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          {isBrandsLoading ? (
+            // Loading skeleton
+            Array(12)
+              .fill(0)
+              .map((_, index) => (
+                <div
+                  key={index}
+                  className="lg:w-1/6 my-4 md:w-1/4 sm:w-1/3 w-1/2 px-2"
+                >
+                  <div className="bg-white rounded-lg shadow-md p-4 h-32">
+                    <Skeleton height={80} className="rounded-md mb-2" />
+                    <Skeleton count={1} />
+                  </div>
+                </div>
+              ))
+          ) : brands && brands.length > 0 ? (
+            brands.map((brand, index) => (
+              <motion.div
+                key={brand.id}
+                className="lg:w-1/6 my-4 md:w-1/4 sm:w-1/3 w-1/2 px-2"
+                variants={itemVariants}
+                custom={index}
+                transition={{
+                  delay: index * 0.1,
+                  type: 'spring',
+                  stiffness: 100,
+                  damping: 12,
+                }}
+              >
+                <PopularBrands
+                  id={brand.id}
+                  name={brand.name}
+                  logo={brand.logo as any}
+                  discount={`${brand.discount}% Off`}
+                />
+              </motion.div>
+            ))
+          ) : (
+            <div className="text-center py-10 w-full">
+              <p className="text-gray-500">No brands available</p>
+            </div>
+          )}
+        </motion.div>
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <motion.div
+            className="flex justify-center items-center gap-4 mt-8 mb-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+          >
+            <motion.button
+              className={`px-4 py-2 rounded-md border ${
+                currentPage === 1
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  : 'bg-white text-gray-700 hover:bg-gray-50'
+              }`}
+              onClick={() =>
+                currentPage > 1 && handleBrandPageChange(currentPage - 1)
+              }
+              disabled={currentPage === 1}
+              whileHover={currentPage > 1 ? { scale: 1.05 } : {}}
+              whileTap={currentPage > 1 ? { scale: 0.95 } : {}}
+            >
+              <MdKeyboardArrowLeft className="w-5 h-5" />
+            </motion.button>
+
+            <div className="flex gap-2">
+              {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                let pageNumber;
+                if (totalPages <= 5) {
+                  pageNumber = i + 1;
+                } else if (currentPage <= 3) {
+                  pageNumber = i + 1;
+                } else if (currentPage >= totalPages - 2) {
+                  pageNumber = totalPages - 4 + i;
+                } else {
+                  pageNumber = currentPage - 2 + i;
+                }
+
+                return (
+                  <motion.button
+                    key={pageNumber}
+                    className={`w-10 h-10 rounded-md ${
+                      currentPage === pageNumber
+                        ? 'bg-emerald-500 text-white'
+                        : 'bg-white text-gray-700 hover:bg-gray-50'
+                    }`}
+                    onClick={() => handleBrandPageChange(pageNumber)}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    {pageNumber}
+                  </motion.button>
+                );
+              })}
+            </div>
+
+            <motion.button
+              className={`px-4 py-2 rounded-md border ${
+                currentPage === totalPages
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  : 'bg-white text-gray-700 hover:bg-gray-50'
+              }`}
+              onClick={() =>
+                currentPage < totalPages &&
+                handleBrandPageChange(currentPage + 1)
+              }
+              disabled={currentPage === totalPages}
+              whileHover={currentPage < totalPages ? { scale: 1.05 } : {}}
+              whileTap={currentPage < totalPages ? { scale: 0.95 } : {}}
+            >
+              <MdOutlineKeyboardArrowRight className="w-5 h-5" />
+            </motion.button>
+          </motion.div>
+        )}
+
+        {/* Pagination Info */}
+        {totalBrands > 0 && (
+          <motion.div
+            className="text-center text-sm text-gray-500 mt-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+          >
+            Showing {(currentPage - 1) * brandsItemsPerPage + 1} to{' '}
+            {Math.min(currentPage * brandsItemsPerPage, totalBrands)} of{' '}
+            {totalBrands} brands
+          </motion.div>
+        )}
+      </motion.div>
+    );
+  };
+
   return (
     <Layout>
       <motion.div
@@ -427,9 +602,9 @@ const Home = () => {
             transition={{ delay: 0.4 }}
           >
             <p className="sm:text-base text-sm">Order with prescription</p>
-            <p 
+            <p
               className="sm:text-base text-sm text-primary cursor-pointer hover:underline"
-              onClick={handleOpenPrescriptionModal}
+              onClick={handlePrescriptionUpload}
             >
               Upload Now
             </p>
@@ -452,12 +627,6 @@ const Home = () => {
             />
           </motion.div>
         </motion.div>
-
-        {/* Prescription Upload Modal */}
-        <PrescriptionUploadModal 
-          show={showPrescriptionModal} 
-          onClose={handleClosePrescriptionModal} 
-        />
 
         {renderSearchResults()}
         {!showSearchResults && (
@@ -495,9 +664,6 @@ const Home = () => {
               />
             </motion.div>
             <CategoriesProductsContainer />
-            {/* {featuredCategories.map((category, index) =>
-              renderCategorySection(category, index)
-            )} */}
             <motion.div
               className="w-full mt-12 lg:max-w-[96%] max-w-[90%] mx-auto"
               variants={itemVariants}
@@ -510,45 +676,10 @@ const Home = () => {
               </motion.h1>
               <NewItems products={products} isLoading={isLoading} />
             </motion.div>
-            <motion.div
-              className="w-full mt-12 mx-auto"
-              variants={itemVariants}
-            >
-              <motion.h1
-                className="text-[28px] font-medium text-center"
-                variants={headingVariants}
-              >
-                Popular Brands
-              </motion.h1>
-              <motion.div
-                className="w-full flex flex-wrap justify-center px-4 my-8"
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-              >
-                {brands.map((brand, index) => (
-                  <motion.div
-                    key={brand.id}
-                    className="lg:w-1/6 my-4 md:w-1/4 sm:w-1/3 w-1/2 px-2"
-                    variants={itemVariants}
-                    custom={index}
-                    transition={{
-                      delay: index * 0.1,
-                      type: 'spring',
-                      stiffness: 100,
-                      damping: 12,
-                    }}
-                  >
-                    <PopularBrands
-                      id={brand.id}
-                      name={brand.name}
-                      logo={brand.logo as any}
-                      discount={`${brand.discount}% Off`}
-                    />
-                  </motion.div>
-                ))}
-              </motion.div>
-            </motion.div>
+
+            {/* Popular Brands with Pagination */}
+            {renderPopularBrands()}
+
             <HealthBanner />
             <motion.div
               variants={itemVariants}
