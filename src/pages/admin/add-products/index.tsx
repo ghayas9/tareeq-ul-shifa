@@ -29,6 +29,7 @@ const schema = z.object({
   uses: z.string().optional(),
   dosage: z.string().optional(),
   warnings: z.string().optional(),
+  formula: z.string().optional(),
   quantity: z.string().optional(),
 });
 
@@ -324,9 +325,9 @@ function AddProducts() {
                 <Input
                   type="text"
                   label="SKU"
-                  required={true}
+                  required={false}
                   errors={errors}
-                  placeholder=""
+                  placeholder="Enter SKU (optional)"
                   name="sku"
                   register={register('sku')}
                   className="!text-sm !font-robotoSlab flex-1"
@@ -334,9 +335,9 @@ function AddProducts() {
                 <Input
                   type="text"
                   label="Regular Price"
-                  required={true}
+                  required={false}
                   errors={errors}
-                  placeholder=""
+                  placeholder="Enter regular price (optional)"
                   name="originalPrice"
                   register={register('originalPrice')}
                   className="!text-sm !font-robotoSlab flex-1"
@@ -418,6 +419,16 @@ function AddProducts() {
                   className="px-3 py-1 w-full outline-none resize-none border border-CloudGray rounded-[10px] h-32"
                 ></textarea>
               </div>
+
+              <div className="py-3">
+                <p className="text-sm font-robotoSlab mb-1">Formula</p>
+                <textarea
+                  {...register('formula')}
+                  placeholder="Enter product formula"
+                  className="px-3 py-1 w-full outline-none resize-none border border-CloudGray rounded-[10px] h-32"
+                ></textarea>
+              </div>
+
               <div className="mb-4">
                 <label className="block text-sm font-robotoSlab mb-1">
                   Status <span className="text-red-700">*</span>

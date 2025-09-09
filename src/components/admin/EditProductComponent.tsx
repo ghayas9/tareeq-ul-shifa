@@ -27,6 +27,7 @@ const schema = z.object({
   uses: z.string().optional(),
   dosage: z.string().optional(),
   warnings: z.string().optional(),
+  formula: z.string().optional(),
   quantity: z.string().optional(),
 });
 
@@ -82,6 +83,7 @@ const EditProductForm: React.FC<EditProductProps> = ({
       uses: product?.uses || '',
       dosage: product?.dosage || '',
       warnings: product?.warnings || '',
+      formula: product?.formula || '',
       quantity: product?.quantity?.toString() || '',
     },
   });
@@ -153,17 +155,17 @@ const EditProductForm: React.FC<EditProductProps> = ({
 
   const categoryOptions = Array.isArray(categories)
     ? categories.map((category: any) => ({
-        label: category.name,
-        value: category.id,
-      }))
+      label: category.name,
+      value: category.id,
+    }))
     : [];
 
   // Use allBrands instead of brands for dropdown options
   const brandOptions = Array.isArray(allBrands)
     ? allBrands.map((brand: any) => ({
-        label: brand.name,
-        value: brand.id,
-      }))
+      label: brand.name,
+      value: brand.id,
+    }))
     : [];
 
   const handleCategorySelect = (value: string) => {
@@ -308,7 +310,7 @@ const EditProductForm: React.FC<EditProductProps> = ({
                 label="SKU"
                 required={false}
                 errors={errors}
-                placeholder=""
+                placeholder="Enter SKU (optional)"
                 name="sku"
                 register={register('sku')}
                 className="!text-sm !font-robotoSlab flex-1"
@@ -318,7 +320,7 @@ const EditProductForm: React.FC<EditProductProps> = ({
                 label="Regular Price"
                 required={false}
                 errors={errors}
-                placeholder=""
+                placeholder="Enter regular price (optional)"
                 name="originalPrice"
                 register={register('originalPrice')}
                 className="!text-sm !font-robotoSlab flex-1"
@@ -392,6 +394,15 @@ const EditProductForm: React.FC<EditProductProps> = ({
               <textarea
                 {...register('warnings')}
                 placeholder="Enter product warnings"
+                className="px-3 py-1 w-full outline-none resize-none border border-CloudGray rounded-[10px] h-32"
+              ></textarea>
+            </div>
+
+            <div className="py-3">
+              <p className="text-sm font-robotoSlab mb-1">Formula</p>
+              <textarea
+                {...register('formula')}
+                placeholder="Enter product formula"
                 className="px-3 py-1 w-full outline-none resize-none border border-CloudGray rounded-[10px] h-32"
               ></textarea>
             </div>

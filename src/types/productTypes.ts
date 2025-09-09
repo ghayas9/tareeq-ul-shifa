@@ -3,7 +3,7 @@ export interface Product {
   categoryId: string;
   name: string;
   brand: string;
-  sku: string;
+  sku: string | null;
   price: number;
   originalPrice: number | null;
   image: string | null;
@@ -13,6 +13,7 @@ export interface Product {
   uses: string | null;
   dosage: string | null;
   warnings: string | null;
+  formula: string | null;
   quantity: number | null;
   createdAt: string;
   updatedAt: string;
@@ -45,6 +46,7 @@ export interface CreateProductData {
   uses?: string | null;
   dosage?: string | null;
   warnings?: string | null;
+  formula?: string | null;
   quantity?: number | null;
 }
 
@@ -53,7 +55,7 @@ export interface UpdateProductData {
   categoryId?: string;
   name?: string;
   brand?: string;
-  sku?: string;
+  sku?: string | null;
   price?: number;
   originalPrice?: number | null;
   image?: string | null;
@@ -63,6 +65,7 @@ export interface UpdateProductData {
   uses?: string | null;
   dosage?: string | null;
   warnings?: string | null;
+  formula?: string | null;
   quantity?: number | null;
 }
 
