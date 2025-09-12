@@ -1,7 +1,7 @@
 // src/hooks/image.hook.ts
 import { useState } from 'react';
-import axios from 'axios';
 import toast from 'react-hot-toast';
+import { api } from '@/config/constants';
 
 export const useImage = () => {
   const [isUploading, setIsUploading] = useState(false);
@@ -27,8 +27,8 @@ export const useImage = () => {
         formData.append('entityType', entityType);
       }
 
-      const response = await axios.post(
-        'https://api.tareequlshifa.com/api/v1/upload',
+      const response = await api.post(
+        '/upload',
         formData,
         {
           headers: {
@@ -64,8 +64,8 @@ export const useImage = () => {
   // Delete an uploaded image
   const deleteImage = async (imageId: string) => {
     try {
-      await axios.delete(
-        `https://api.tareequlshifa.com/api/v1/images/${imageId}`
+      await api.delete(
+        `/images/${imageId}`
       );
       return true;
     } catch (error) {
