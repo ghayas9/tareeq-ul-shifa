@@ -15,6 +15,7 @@ import { useCart } from '@/hooks/cart.hook';
 import toast from 'react-hot-toast';
 import { toggleCartSidebar } from '@/redux/slices/cartSlice';
 import Spinner from '@/components/Spinner';
+import ZoomableImage from '@/components/common/ZoomableImage';
 
 const ProductDetails = () => {
   const dispatch = useDispatch();
@@ -24,7 +25,7 @@ const ProductDetails = () => {
   const { addItemToCart } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
-   
+
   const discount = calculateDiscount(
     product?.originalPrice as number,
     product?.price as number
@@ -50,21 +51,21 @@ const ProductDetails = () => {
       toast.error('Product not available');
       return;
     }
-    
+
     if (!isInStock) {
       toast.error('This product is out of stock');
       return;
     }
-    
+
     try {
       setIsAddingToCart(true);
       console.log(`Adding product ${product.id} to cart, quantity: ${quantity}`);
-      
+
       await addItemToCart({
         productId: product.id,
         quantity: quantity
       });
-            dispatch(toggleCartSidebar());
+      dispatch(toggleCartSidebar());
     } catch (error: any) {
       console.error('Failed to add item to cart:', error);
       // toast.error(error.message || 'Failed to add item to cart lll');
@@ -75,181 +76,160 @@ const ProductDetails = () => {
 
   return (
     <Layout>
-      <div>
-        <div className="px-6">
-          <Breadcrumb />
-        </div>
-        <div className="w-full flex flex-wrap lg:flex-nowrap justify-between px-6 py-5">
-          <div className="lg:order-1 order-1 w-full md:w-1/2 lg:w-auto flex justify-center">
-            <div className="bg-white rounded-[9px] shadow-sm border border-CloudGray py-4 px-4">
-              {isLoading ? (
-                <Skeleton width={300} height={300} className="rounded-md" />
-              ) : (
-                <Image
-                  src={product?.image || ''}
-                  alt={product?.name || ''}
-                  width={300}
-                  height={100}
-                  className=""
-                  unoptimized
-                />
-              )}
-            </div>
+      <div className="min-h-screen bg-gray-50">
+        {/* Breadcrumb */}
+        <div className="bg-white border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <Breadcrumb />
           </div>
+        </div>
 
-          <div className="lg:order-2 order-2 flex flex-col mx-auto w-full md:w-1/2 lg:w-auto mt-6">
-            {isLoading ? (
-              <Skeleton width={200} className="text-[28px]" />
-            ) : (
-              <h2 className="font-robotoSlab text-[28px] font-medium">
-                {product?.name}
-              </h2>
-            )}
-            <div className="flex gap-6 items-center mt-2">
-              <div>
-                {isLoading ? (
-                  <Skeleton className="text-3xl" width={100} />
-                ) : (
-                  product?.originalPrice && (
-                    <p className="text-CoolGray text-3xl font-medium font-robotoSlab line-through">
-                      Rs {product?.originalPrice}
-                    </p>
-                  )
-                )}
+        {/* Main Product Content */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
 
+            {/* Product Image Section - Larger on Left */}
+            <div className="lg:col-span-2 space-y-4">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-1">
                 {isLoading ? (
-                  <Skeleton className="text-sm py-1 my-2" width={100} />
+                  <Skeleton width={600} height={600} className="rounded-lg" />
                 ) : (
-                  <p className="text-sm font-robotoSlab text-DimGray mt-2">
-                    SKU: {product?.sku}
-                  </p>
+                  <ZoomableImage
+                    src={product?.image || ''}
+                    alt={product?.name || ''}
+                    // width={600}
+                    // height={600}
+                    className="rounded-lg"
+                    zoomLevel={3}
+                    unoptimized
+                  />
                 )}
               </div>
-              <div className="flex gap-4">
-                <div className="">
+            </div>
+
+            {/* Product Details Section - Smaller on Right */}
+            <div className="lg:col-span-1 space-y-6">
+              {/* Product Title */}
+              <div>
+                {isLoading ? (
+                  <Skeleton width={300} height={36} className="mb-4" />
+                ) : (
+                  <h1 className="text-3xl font-bold text-gray-900 mb-4">
+                    {product?.name}
+                  </h1>
+                )}
+              </div>
+
+              {/* Pricing Section */}
+              <div className="space-y-3">
+                <div className="flex items-center space-x-4">
                   {isLoading ? (
-                    <Skeleton className="text-3xl my-2" width={150} />
+                    <Skeleton width={120} height={32} />
                   ) : (
-                    <p className="text-3xl font-medium font-robotoSlab text-secondary mb-2">
-                      Rs {product?.price}
-                    </p>
+                    <div className="flex items-center space-x-3">
+                      {product?.originalPrice && (
+                        <span className="text-2xl text-gray-400 line-through">
+                          Rs {product.originalPrice}
+                        </span>
+                      )}
+                      <span className="text-3xl font-bold text-secondary">
+                        Rs {product?.price}
+                      </span>
+                    </div>
                   )}
+                </div>
+
+                {/* Discount Badge */}
+                {discount && !isLoading && (
+                  <div className="inline-flex items-center">
+                    <span className="bg-red-100 text-red-800 text-sm font-semibold px-3 py-1 rounded-full">
+                      Save {discount}%
+                    </span>
+                  </div>
+                )}
+
+                {/* Stock Status */}
+                <div className="flex items-center space-x-2">
                   {isLoading ? (
-                    <Skeleton width={80} height={24} />
+                    <Skeleton width={100} height={24} />
                   ) : (
-                    <span className={`text-sm font-robotoSlab font-semibold rounded-[4px] px-3 py-1 ${
-                      isInStock 
-                        ? 'bg-[#d9ead2] text-success' 
-                        : 'bg-red-100 text-red-600'
-                    }`}>
+                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${isInStock
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-red-100 text-red-800'
+                      }`}>
+                      <div className={`w-2 h-2 rounded-full mr-2 ${isInStock ? 'bg-green-500' : 'bg-red-500'
+                        }`} />
                       {isInStock ? 'In Stock' : 'Out of Stock'}
                     </span>
                   )}
                 </div>
-                {discount && (
-                  <div className="relative mt-2">
-                    <Image
-                      src="/images/productdetailbg.png"
-                      alt=""
-                      width={70}
-                      height={70}
-                      className=""
-                    />
-                    <h3 className="text-white text-xs font-robotoSlab font-semibold absolute top-2 px-2 rounded">
-                      {discount} %Off
-                    </h3>
-                  </div>
-                )}
               </div>
-            </div>
-            <div>
-              <div className="flex gap-4 items-center mt-7">
+
+              {/* Quantity and Add to Cart */}
+              <div className="space-y-4 pt-4 border-t border-gray-200">
                 <div>
-                  <h1 className="text-sm font-robotoSlab font-medium">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Quantity
-                  </h1>
-                  <div className="flex items-center border border-CloudGray rounded-md w-[113px]">
-                    <button
-                      className="px-3 py-1 text-lg"
-                      onClick={() => handleQuantityChange(quantity - 1)}
-                      disabled={quantity <= 1 || isLoading}
-                    >
-                      -
-                    </button>
-                    <div className="w-10 text-center border-x border-CloudGray py-1">
-                      {quantity}
+                  </label>
+                  <div className="flex items-center space-x-4">
+                    <div className="flex items-center border border-gray-300 rounded-lg">
+                      <button
+                        className="px-4 py-2 text-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                        onClick={() => handleQuantityChange(quantity - 1)}
+                        disabled={quantity <= 1 || isLoading}
+                      >
+                        −
+                      </button>
+                      <div className="px-4 py-2 min-w-[60px] text-center border-x border-gray-300">
+                        {quantity}
+                      </div>
+                      <button
+                        className="px-4 py-2 text-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                        onClick={() => handleQuantityChange(quantity + 1)}
+                        disabled={isLoading || (product?.quantity !== null && quantity >= (product?.quantity || 0))}
+                      >
+                        +
+                      </button>
                     </div>
-                    <button
-                      className="px-3 py-1 text-lg"
-                      onClick={() => handleQuantityChange(quantity + 1)}
-                      disabled={isLoading || (product?.quantity !== null && quantity >= (product?.quantity || 0))}
-                    >
-                      +
-                    </button>
                   </div>
                 </div>
-                <Button 
-                  label={isAddingToCart ? <Spinner/> : "Add to Cart"} 
-                  className="w-1/2 mt-6" 
+
+                <Button
+                  label={isAddingToCart ? <Spinner /> : "Add to Cart"}
+                  className="w-full py-3 text-lg font-medium"
                   onClick={handleAddToCart}
                   disabled={isLoading || isAddingToCart || !isInStock}
                 />
               </div>
-              <div className="mt-2">
-                <p className="text-sm font-robotoSlab font-semibold text-textColor">
-                  Delivery by{' '}
-                  <span className="text-sm font-robotoSlab font-semibold text-primary">
-                    Tomorrow, 6:00 pm - 10:00 pm
-                  </span>
-                </p>
+
+
+
+              {/* Product Features */}
+              <div className="space-y-3">
+                <h3 className="text-lg font-semibold text-gray-900">Product Highlights</h3>
+                <ul className="space-y-2 text-sm text-gray-600">
+                  <li className="flex items-center space-x-2">
+                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                    <span>High quality pharmaceutical product</span>
+                  </li>
+                  <li className="flex items-center space-x-2">
+                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                    <span>Authentic and genuine products</span>
+                  </li>
+                  <li className="flex items-center space-x-2">
+                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                    <span>Fast and secure delivery</span>
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
 
-          <div className=" w-full lg:order-3  order-1  md:w-1/2 lg:w-auto flex justify-center lg:justify-end mt-6 md:mt-0">
-            <div className="px-2">
-              <div className="relative border border-dashed border-red-600 rounded-[10px]">
-                <div className="absolute -left-4 -top-3">
-                  <Image
-                    src="/images/productoffer.png"
-                    alt="offer"
-                    width={30}
-                    height={30}
-                    unoptimized
-                  />
-                </div>
-                <div className="relative w-full min-w-[250px] min-h-40 ">
-                  <Image
-                    src="/images/productcare.png"
-                    alt=""
-                    fill
-                    className="object-contain px-2 "
-                  />
-                </div>
-              </div>
-              <div className="relative mt-4 border border-dashed border-red-600 rounded-[10px]">
-                <div className="absolute -left-4 -top-3">
-                  <Image
-                    src="/images/productoffer.png"
-                    alt="offer"
-                    width={30}
-                    height={30}
-                    unoptimized
-                  />
-                </div>
-                <div className="relative min-w-[250px] min-h-40">
-                  <Image
-                    src="/images/productcare.png"
-                    alt=""
-                    fill
-                    className="object-contain px-2 "
-                  />
-                </div>
-              </div>
-            </div>
+          {/* Product Information Section */}
+          <div className="mt-12">
+            <ProductInformation product={product} />
           </div>
         </div>
-        <ProductInformation  product={product}/>
       </div>
     </Layout>
   );

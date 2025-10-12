@@ -227,6 +227,13 @@ const Home = () => {
     }
   };
 
+
+  const handleClear = () => {
+    setSearch("")
+    setIsSearching(false)
+    clearSearchResults();
+  }
+
   const handleSearchSubmit = async () => {
     if (search.trim()) {
       setIsSearching(true);
@@ -495,11 +502,10 @@ const Home = () => {
             transition={{ delay: 0.5 }}
           >
             <motion.button
-              className={`px-4 py-2 rounded-md border ${
-                currentPage === 1
-                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                  : 'bg-white text-gray-700 hover:bg-gray-50'
-              }`}
+              className={`px-4 py-2 rounded-md border ${currentPage === 1
+                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                : 'bg-white text-gray-700 hover:bg-gray-50'
+                }`}
               onClick={() =>
                 currentPage > 1 && handleBrandPageChange(currentPage - 1)
               }
@@ -526,11 +532,10 @@ const Home = () => {
                 return (
                   <motion.button
                     key={pageNumber}
-                    className={`w-10 h-10 rounded-md ${
-                      currentPage === pageNumber
-                        ? 'bg-emerald-500 text-white'
-                        : 'bg-white text-gray-700 hover:bg-gray-50'
-                    }`}
+                    className={`w-10 h-10 rounded-md ${currentPage === pageNumber
+                      ? 'bg-emerald-500 text-white'
+                      : 'bg-white text-gray-700 hover:bg-gray-50'
+                      }`}
                     onClick={() => handleBrandPageChange(pageNumber)}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.95 }}
@@ -542,11 +547,10 @@ const Home = () => {
             </div>
 
             <motion.button
-              className={`px-4 py-2 rounded-md border ${
-                currentPage === totalPages
-                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                  : 'bg-white text-gray-700 hover:bg-gray-50'
-              }`}
+              className={`px-4 py-2 rounded-md border ${currentPage === totalPages
+                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                : 'bg-white text-gray-700 hover:bg-gray-50'
+                }`}
               onClick={() =>
                 currentPage < totalPages &&
                 handleBrandPageChange(currentPage + 1)
@@ -621,6 +625,7 @@ const Home = () => {
               onChange={handleSearchChange}
               onKeyDown={handleSearchKeyDown}
               onSearch={handleSearchSubmit}
+              onClear={handleClear}
               inputClassName="!rounded-lg"
               searchBtnClassName="!rounded-r-lg"
               className="my-4 !max-w-xl"

@@ -1,0 +1,49 @@
+name: Deploy tareeq-ul-shifa
+
+on:
+  push:
+    branches:
+      - master  # or main if you use main
+
+env:
+  REPO_ACCESS_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24' # your VPS uses Node 24.4.0
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: 🚀 Deploy to VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          envs: REPO_ACCESS_TOKEN
+          script: |
+            set -e
+            cd ~/applications/tareeq-ul-shifa
+            git reset --hard
+            git remote set-url origin https://$REPO_ACCESS_TOKEN@github.com/ghayas9/tareeq-ul-shifa.git
+            git pull origin master
+            source ~/.nvm/nvm.sh
+            nvm use 24
+            npm ci
+            npm run build
+            pm2 restart tareeq-ul-shifa --update-env
+            sudo nginx -t
+            sudo systemctl reload nginx

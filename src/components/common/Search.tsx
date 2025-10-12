@@ -1,5 +1,6 @@
 import React, { ChangeEvent, useState, KeyboardEvent } from 'react';
 import { SearchIcon } from '../icons/Icons';
+import { FaCross } from 'react-icons/fa';
 
 interface SearchInputProps {
   placeholder?: string;
@@ -12,6 +13,7 @@ interface SearchInputProps {
   onChange?: (value: string) => void;
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
   onSearch?: () => void;
+  onClear?: () => void;
 }
 
 const Search = ({
@@ -23,6 +25,7 @@ const Search = ({
   onChange,
   onKeyDown,
   onSearch,
+  onClear,
   showButton = true,
 }: SearchInputProps) => {
   const [searchValue, setSearchValue] = useState(value || '');
@@ -40,6 +43,11 @@ const Search = ({
     }
   };
 
+  const OnClear = () => {
+    onClear?.()
+    setSearchValue("")
+  }
+
   return (
     <div className={`w-full ${className}`}>
       <div className="relative flex items-center w-full mx-auto">
@@ -52,6 +60,9 @@ const Search = ({
           onKeyDown={onKeyDown}
           className={`w-full focus:outline-none md:text-base text-xs sm:placeholder:text-base placeholder:text-[9px] rounded-xl px-2 py-[5px] md:pl-10 pl-7 border border-[#9E9E9E] ${inputClassName}`}
         />
+        {searchValue ? <span onClick={OnClear} className='absolute right-24 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer'>
+          x
+        </span> : null}
         {showButton && (
           <button
             onClick={handleSearch}
