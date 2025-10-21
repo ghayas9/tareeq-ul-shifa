@@ -31,7 +31,23 @@ import CategoriesProductsContainer from '@/components/CategoryProductsContainer'
 
 const Home = () => {
   const router = useRouter();
-  const [search, setSearch] = useState('');
+  
+  // Initialize search state from localStorage or URL params
+  const [search, setSearch] = useState(() => {
+    if (typeof window !== 'undefined') {
+      // Check URL params first
+      const urlParams = new URLSearchParams(window.location.search);
+      const searchParam = urlParams.get('search');
+      if (searchParam) {
+        return searchParam;
+      }
+      // Then check localStorage
+      const savedSearch = localStorage.getItem('searchQuery');
+      return savedSearch || '';
+    }
+    return '';
+  });
+  
   const [categoryProducts, setCategoryProducts] = useState<
     Record<string, any[]>
   >({});
@@ -148,6 +164,14 @@ const Home = () => {
     fetchTopSellingData();
   }, []);
 
+  // Effect to handle search persistence and auto-search on page load
+  useEffect(() => {
+    if (search.trim()) {
+      // Auto-search if there's a saved search query
+      handleSearchSubmit();
+    }
+  }, []); // Only run once on mount
+
   useEffect(() => {
     if (!categories || categories.length === 0) return;
 
@@ -225,6 +249,19 @@ const Home = () => {
 
     if (!value.trim()) {
       clearSearchResults();
+      // Clear saved search when input is empty
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('searchQuery');
+        // Update URL to remove search param
+        const url = new URL(window.location.href);
+        url.searchParams.delete('search');
+        window.history.replaceState({}, '', url.toString());
+      }
+    } else {
+      // Save search query to localStorage
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('searchQuery', value);
+      }
     }
   };
 
@@ -235,35 +272,44 @@ const Home = () => {
     clearSearchResults();
   }
 
-  const handleSearchSubmit = async () => {
-    if (search.trim()) {
-      setIsSearching(true);
-      setShowSearchResults(true);
+ 
+const handleSearchSubmit = async () => {
+  if (search.trim()) {
+    setIsSearching(true);
+    setShowSearchResults(true);
 
-      try {
-        const response = await getAllProducts({
-          status: 'active',
-          search: search.trim(),
-        });
+    router.push(
+      {
+        pathname: router.pathname,
+        query: { ...router.query, search: search.trim() },
+      },
+      undefined,
+      { shallow: true }
+    );
 
-        if (response?.payload?.data) {
-          const results = Array.isArray(response.payload.data)
-            ? response.payload.data
-            : [response.payload.data];
+    try {
+      const response = await getAllProducts({
+        status: 'active',
+        search: search.trim(),
+      });
 
-          setSearchResults(results);
-        } else {
-          setSearchResults([]);
-        }
-      } catch (error) {
-        console.error('Error during search:', error);
+      if (response?.payload?.data) {
+        const results = Array.isArray(response.payload.data)
+          ? response.payload.data
+          : [response.payload.data];
+
+        setSearchResults(results);
+      } else {
         setSearchResults([]);
-      } finally {
-        setIsSearching(false);
       }
+    } catch (error) {
+      console.error('Error during search:', error);
+      setSearchResults([]);
+    } finally {
+      setIsSearching(false);
     }
-  };
-
+  }
+};
   const handleSearchKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleSearchSubmit();
@@ -274,6 +320,14 @@ const Home = () => {
     setShowSearchResults(false);
     setSearchResults([]);
     setSearch('');
+    
+    // Clear localStorage and URL params
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('searchQuery');
+      const url = new URL(window.location.href);
+      url.searchParams.delete('search');
+      window.history.replaceState({}, '', url.toString());
+    }
   };
 
   // Handle prescription upload navigation

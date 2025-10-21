@@ -1,4 +1,4 @@
-// contexts/SearchContext.tsx
+
 import React, { createContext, useState, useContext, useEffect, ReactNode, useRef } from 'react';
 import { useProduct } from '@/hooks/product.hook';
 import { useRouter } from 'next/router';
@@ -20,17 +20,38 @@ interface SearchContextType {
 const SearchContext = createContext<SearchContextType | undefined>(undefined);
 
 export const SearchProvider = ({ children }: { children: ReactNode }) => {
-  const [search, setSearch] = useState('');
+  const router = useRouter();
+  const { getAllProducts } = useProduct();
+
+  const [search, setSearch] = useState(() => {
+    // Check router query first, fallback to localStorage
+    const searchParam = router.query.search as string;
+    if (searchParam) {
+      return searchParam;
+    }
+    if (typeof window !== 'undefined') {
+      const savedSearch = localStorage.getItem('searchQuery');
+      return savedSearch || '';
+    }
+    return '';
+  });
+
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [showSearchResults, setShowSearchResults] = useState(false);
-  const { getAllProducts } = useProduct();
-  const router = useRouter();
-  
+
   // Refs for handling click outside
   const searchInputRef = useRef<HTMLInputElement | null>(null);
   const searchResultsRef = useRef<HTMLDivElement | null>(null);
-  
+
+  // Sync search state with URL query params
+  useEffect(() => {
+    const searchParam = router.query.search as string;
+    if (searchParam && searchParam !== search) {
+      setSearch(searchParam);
+    }
+  }, [router.query.search]);
+
   // Reset search when changing routes
   useEffect(() => {
     const handleRouteChange = () => {
@@ -44,32 +65,60 @@ export const SearchProvider = ({ children }: { children: ReactNode }) => {
       router.events.off('routeChangeStart', handleRouteChange);
     };
   }, [router, showSearchResults]);
-  
+
+  // Auto-search on page load if there's a saved search
+  useEffect(() => {
+    if (search.trim() && search.trim().length >= 2) {
+      handleSearchSubmit(search);
+    }
+  }, []); // Only run once on mount
+
   // Handle click outside to close search results
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
-        showSearchResults && 
-        searchResultsRef.current && 
+        showSearchResults &&
+        searchResultsRef.current &&
         !searchResultsRef.current.contains(event.target as Node) &&
         !(event.target as HTMLElement).closest('.search-input-container')
       ) {
         setShowSearchResults(false);
       }
     };
-    
+
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showSearchResults]);
-  
+
   const handleSearchChange = (value: string) => {
     setSearch(value);
-    
+
     if (!value.trim()) {
       clearSearchResults();
-    } else if (value.trim().length >= 2) {
-      // Only start searching when user has typed at least 2 characters
-      handleSearchSubmit(value);
+      // Clear saved search when input is empty
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('searchQuery');
+      }
+      // Remove search param from URL
+      const { search, ...restQuery } = router.query;
+      router.replace(
+        {
+          pathname: router.pathname,
+          query: restQuery,
+        },
+        undefined,
+        { shallow: true }
+      );
+    } else {
+      // Save search query to localStorage
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('searchQuery', value);
+      }
+
+      if (value.trim().length >= 2) {
+        // Only start searching when user has typed at least 2 characters
+        handleSearchSubmit(value);
+      }
     }
   };
 
@@ -77,6 +126,16 @@ export const SearchProvider = ({ children }: { children: ReactNode }) => {
     if (value.trim()) {
       setIsSearching(true);
       setShowSearchResults(true);
+
+      // Update URL with search parameter
+      router.replace(
+        {
+          pathname: router.pathname,
+          query: { ...router.query, search: value.trim() },
+        },
+        undefined,
+        { shallow: true }
+      );
 
       try {
         const response = await getAllProducts({
@@ -102,7 +161,7 @@ export const SearchProvider = ({ children }: { children: ReactNode }) => {
       }
     }
   };
-  
+
   const handleSearchKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleSearchSubmit(search);
@@ -113,17 +172,33 @@ export const SearchProvider = ({ children }: { children: ReactNode }) => {
     setShowSearchResults(false);
     setSearchResults([]);
     setSearch('');
+
+    // Clear localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('searchQuery');
+    }
+
+    // Remove search param from URL
+    const { search, ...restQuery } = router.query;
+    router.replace(
+      {
+        pathname: router.pathname,
+        query: restQuery,
+      },
+      undefined,
+      { shallow: true }
+    );
   };
-  
+
   const toggleSearchVisibility = () => {
     setShowSearchResults(!showSearchResults);
-    
+
     // If opening search and we have a search term, update results
     if (!showSearchResults && search.trim().length >= 2) {
       handleSearchSubmit(search);
     }
   };
-  
+
   const handleProductClick = (productId: string) => {
     router.push(`/products/${productId}`);
     clearSearchResults();
