@@ -38,6 +38,7 @@ const ProductDetails = () => {
   }, [dispatch, id]);
 
   const isInStock = product?.quantity != null && product.quantity > 0;
+
   // Handle quantity change
   const handleQuantityChange = (newQuantity: number) => {
     // Make sure quantity is within limits
@@ -85,21 +86,19 @@ const ProductDetails = () => {
         </div>
 
         {/* Main Product Content */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex w-full md:justify-between flex-col md:flex-row gap-10 lg:gap-16">
 
-            {/* Product Image Section - Larger on Left */}
-            <div className="lg:col-span-2 space-y-4">
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-1">
+            {/* Product Image Section - Left Side */}
+            <div className="md:w-1/2 w-[95%] space-y-4">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
                 {isLoading ? (
-                  <Skeleton width={600} height={600} className="rounded-lg" />
+                  <Skeleton width={500} height={500} className="rounded-lg" />
                 ) : (
                   <ZoomableImage
                     src={product?.image || ''}
                     alt={product?.name || ''}
-                    // width={600}
-                    // height={600}
-                    className="rounded-lg"
+                    className="rounded-lg w-full h-auto max-h-[600px] object-contain"
                     zoomLevel={3}
                     unoptimized
                   />
@@ -107,8 +106,8 @@ const ProductDetails = () => {
               </div>
             </div>
 
-            {/* Product Details Section - Smaller on Right */}
-            <div className="lg:col-span-1 space-y-6">
+            {/* Product Details <S></S>ection - Right Side */}
+            <div className="md:w-[45%] w-11/12 space-y-6">
               {/* Product Title */}
               <div>
                 {isLoading ? (
@@ -201,8 +200,6 @@ const ProductDetails = () => {
                   disabled={isLoading || isAddingToCart || !isInStock}
                 />
               </div>
-
-
 
               {/* Product Features */}
               <div className="space-y-3">

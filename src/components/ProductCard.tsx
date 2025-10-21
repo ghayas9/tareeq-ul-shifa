@@ -32,7 +32,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         className="bg-white rounded-lg shadow-md p-3 h-full flex flex-col cursor-pointer"
         onClick={() => router.push(`/products/${product.id}`)}
       >
-        <div className="relative flex-shrink-0 h-32 flex items-center justify-center mb-2">
+        <div className="flex relative rounded-[10px] mx-2 hover:shadow-xl shadow-sm h-[218px] bg-white overflow-hidden">
           {product.quantity === 0 && (
             <span className="absolute top-0 left-0 bg-red-100 text-red-800 text-xs font-medium px-2 py-0.5 rounded">
               Out of Stock

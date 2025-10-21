@@ -318,7 +318,7 @@ const ExploreCategory: React.FC<ExploreCategoryProps> = ({
                   <img
                     src={category.image}
                     alt={categoryName}
-                    className="w-12 h-12 object-contain"
+                    className="w-20 h-20 rounded-full object-cover"
                   />
                 </div>
                 <h3 className="text-center text-sm font-medium line-clamp-2">

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 import { motion } from 'framer-motion';
@@ -9,6 +9,7 @@ import {
 import Skeleton from 'react-loading-skeleton';
 import { useRouter } from 'next/router';
 import DiscountBadge from './common/DiscountBadge';
+import type { Swiper as SwiperType } from 'swiper';
 
 // Define types for props
 interface CategorySectionProps {
@@ -35,6 +36,7 @@ const CategoryProducts: React.FC<CategorySectionProps> = ({
   const router = useRouter();
   const [showArrows, setShowArrows] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const swiperRef = useRef<SwiperType | null>(null);
 
   const categoryId = typeof category === 'object' ? category.id : category;
   const categoryName = typeof category === 'object' ? category.name : category;
@@ -43,6 +45,19 @@ const CategoryProducts: React.FC<CategorySectionProps> = ({
 
   // Create skeleton placeholders
   const skeletonPlaceholders = Array(5).fill(0);
+
+  // Navigation handlers
+  const handlePrevClick = () => {
+    if (swiperRef.current) {
+      swiperRef.current.slidePrev();
+    }
+  };
+
+  const handleNextClick = () => {
+    if (swiperRef.current) {
+      swiperRef.current.slideNext();
+    }
+  };
 
   // Effect to check if arrows should be displayed based on content and screen size
   useEffect(() => {
@@ -82,6 +97,20 @@ const CategoryProducts: React.FC<CategorySectionProps> = ({
       window.removeEventListener('resize', checkShowArrows);
     };
   }, [categoryProds]);
+
+  // Effect to update navigation when swiper is ready
+  useEffect(() => {
+    if (swiperRef.current && isMounted && showArrows) {
+      // Small delay to ensure DOM elements are ready
+      const timer = setTimeout(() => {
+        if (swiperRef.current?.navigation) {
+          swiperRef.current.navigation.update();
+        }
+      }, 100);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isMounted, showArrows, categoryProds]);
 
   return (
     <motion.div
@@ -139,6 +168,7 @@ const CategoryProducts: React.FC<CategorySectionProps> = ({
                   variants={buttonVariants}
                   whileHover="hover"
                   whileTap="tap"
+                  onClick={handlePrevClick}
                 >
                   <MdKeyboardArrowLeft className="text-xl" />
                 </motion.div>
@@ -152,6 +182,7 @@ const CategoryProducts: React.FC<CategorySectionProps> = ({
                   variants={buttonVariants}
                   whileHover="hover"
                   whileTap="tap"
+                  onClick={handleNextClick}
                 >
                   <MdOutlineKeyboardArrowRight className="text-xl" />
                 </motion.div>
@@ -185,6 +216,16 @@ const CategoryProducts: React.FC<CategorySectionProps> = ({
               },
             }}
             className="px-4 py-4"
+            onSwiper={(swiper) => {
+              swiperRef.current = swiper;
+            }}
+            onInit={(swiper) => {
+              // Ensure navigation is properly initialized
+              if (swiper.navigation) {
+                swiper.navigation.init();
+                swiper.navigation.update();
+              }
+            }}
           >
             {categoryProds.map((product) => {
               const discount = calculateDiscount(
@@ -199,12 +240,12 @@ const CategoryProducts: React.FC<CategorySectionProps> = ({
                     whileHover={{ y: -5, transition: { duration: 0.2 } }}
                   >
                     <div
-                      className="bg-white rounded-lg shadow-md p-3 h-full flex flex-col cursor-pointer"
+                      className="bg-white rounded-lg shadow-md h-full flex flex-col cursor-pointer"
                       onClick={() => router.push(`/products/${product.id}`)}
                     >
-                      <div className="relative flex-shrink-0 h-32 flex items-center justify-center mb-2">
+                      <div className="flex relative rounded-[10px] mx-2 hover:shadow-xl shadow-sm h-[160px] bg-white overflow-hidden">
                         {product.quantity === 0 && (
-                          <span className="absolute top-0 left-0 bg-red-100 text-red-800 text-xs font-medium px-2 py-0.5 rounded">
+                          <span className="absolute top-0 p-1 left-0 bg-red-100 text-red-800 text-xs font-medium px-2 py-0.5 rounded z-10">
                             Out of Stock
                           </span>
                         )}
@@ -216,11 +257,10 @@ const CategoryProducts: React.FC<CategorySectionProps> = ({
                             product.image || '/images/placeholder-product.png'
                           }
                           alt={product.name}
-                          className="h-full w-auto object-contain max-w-full"
+                          className="w-full h-full rounded-t-[10px]"
                         />
                       </div>
-
-                      <div className="flex-grow">
+                      <div className="flex-grow p-2">
                         <h3 className="text-sm font-medium line-clamp-2 mb-1">
                           {product.name}
                         </h3>

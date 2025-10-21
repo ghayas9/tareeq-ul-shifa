@@ -217,6 +217,7 @@ const Home = () => {
   // Brand pagination handlers
   const handleBrandPageChange = (page: number) => {
     setBrandsCurrentPage(page);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleSearchChange = (value: string) => {
