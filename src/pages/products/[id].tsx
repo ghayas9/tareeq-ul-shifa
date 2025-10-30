@@ -87,10 +87,10 @@ const ProductDetails = () => {
 
         {/* Main Product Content */}
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex w-full md:justify-between flex-col md:flex-row gap-10 lg:gap-16">
+          <div className="flex w-11/12 md:justify-between flex-col md:flex-row !gap-20 !lg:gap-24">
 
             {/* Product Image Section - Left Side */}
-            <div className="md:w-1/2 w-[95%] space-y-4">
+            <div className="md:w-1/2 w-[90%] space-y-4">
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
                 {isLoading ? (
                   <Skeleton width={500} height={500} className="rounded-lg" />
@@ -107,7 +107,7 @@ const ProductDetails = () => {
             </div>
 
             {/* Product Details <S></S>ection - Right Side */}
-            <div className="md:w-[45%] w-11/12 space-y-6">
+            <div className="md:w-[40%] w-11/12 space-y-6">
               {/* Product Title */}
               <div>
                 {isLoading ? (

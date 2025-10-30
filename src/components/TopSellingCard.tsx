@@ -41,16 +41,16 @@ const TopSellingCard = ({ product }: any) => {
       className="px-[6px] w-full"
     >
       <div className="relative group ">
-        <div className="flex relative rounded-[10px] mx-2 hover:shadow-xl shadow-sm h-[218px] bg-white overflow-hidden">
+        <div className="flex relative mx-3 p-3 rounded-[10px] hover:shadow-xl shadow-sm h-[218px] justify-center items-center bg-white">
           {product.stock === 0 && (
-            <span className="absolute p-2 top-2 left-2 bg-red-200 w-[105px] text-center flex justify-center items-center h-[24px] text-red-600 text-sm font-medium rounded z-10">
+            <span className="absolute top-2 left-2 bg-red-200 w-[105px] text-center flex justify-center items-center h-[24px] text-red-600 text-sm font-medium rounded">
               Out of Stock
             </span>
           )}
           <img
             src={product.image}
             alt={product.name}
-            className="w-full h-full rounded-t-[10px]"
+            className="w-[250px] h-40 rounded-t-[8px]"
           />
           {discount && <DiscountBadge discountPercentage={discount} />}
           <div className="absolute bottom-4 right-2 transform -translate-x-1/2 translate-y-10 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-in-out flex space-x-3">

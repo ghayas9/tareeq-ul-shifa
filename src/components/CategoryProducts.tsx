@@ -115,7 +115,7 @@ const CategoryProducts: React.FC<CategorySectionProps> = ({
   return (
     <motion.div
       key={categoryId}
-      className="w-full mt-12 lg:max-w-[96%] max-w-[90%] mx-auto"
+      className="w-full mt-12 lg:max-w-[96%] max-w-[90%] mx-auto overflow-visible"
       variants={itemVariants}
       initial="hidden"
       animate="visible"
@@ -157,7 +157,7 @@ const CategoryProducts: React.FC<CategorySectionProps> = ({
           ))}
         </div>
       ) : categoryProds.length > 0 ? (
-        <div className="relative mx-auto w-full">
+        <div className="relative mx-auto w-full overflow-visible pb-4">
           {isMounted && showArrows && (
             <>
               <div
@@ -215,7 +215,7 @@ const CategoryProducts: React.FC<CategorySectionProps> = ({
                 slidesPerView: 5,
               },
             }}
-            className="px-4 py-4"
+            className="px-4 !py-6" 
             onSwiper={(swiper) => {
               swiperRef.current = swiper;
             }}
@@ -240,12 +240,12 @@ const CategoryProducts: React.FC<CategorySectionProps> = ({
                     whileHover={{ y: -5, transition: { duration: 0.2 } }}
                   >
                     <div
-                      className="bg-white rounded-lg shadow-md h-full flex flex-col cursor-pointer"
+                      className="bg-white rounded-lg shadow-md p-2 h-[220px] flex flex-col cursor-pointer"
                       onClick={() => router.push(`/products/${product.id}`)}
                     >
-                      <div className="flex relative rounded-[10px] mx-2 hover:shadow-xl shadow-sm h-[160px] bg-white overflow-hidden">
+                      <div className="relative flex-shrink-0 h-32 flex items-center justify-center mb-2">
                         {product.quantity === 0 && (
-                          <span className="absolute top-0 p-1 left-0 bg-red-100 text-red-800 text-xs font-medium px-2 py-0.5 rounded z-10">
+                          <span className="absolute top-0 left-0 bg-red-100 text-red-800 text-xs font-medium px-2 py-0.5 rounded">
                             Out of Stock
                           </span>
                         )}
@@ -257,7 +257,7 @@ const CategoryProducts: React.FC<CategorySectionProps> = ({
                             product.image || '/images/placeholder-product.png'
                           }
                           alt={product.name}
-                          className="w-full h-full rounded-t-[10px]"
+                          className="h-full w-auto object-contain max-w-full"
                         />
                       </div>
                       <div className="flex-grow p-2">

@@ -201,10 +201,10 @@ const ExploreCategory: React.FC<ExploreCategoryProps> = ({
   }, []);
 
   // Handle click on a category
-  const handleCategoryClick = (categoryId: string) => {
+  const handleCategoryClick = (categoryId: string, categoryName: string) => {
     router.push({
       pathname: '/products-category',
-      query: { category: categoryId },
+      query: { category: categoryId, name: categoryName },
     });
   };
 
@@ -244,7 +244,10 @@ const ExploreCategory: React.FC<ExploreCategoryProps> = ({
       variants={containerVariants}
       transition={{ duration: 0.5 }}
     >
-      <div ref={prevRef} className="category-prev absolute top-1/2 -left-4 z-10 transform -translate-y-1/2">
+      <div
+        ref={prevRef}
+        className="category-prev absolute top-1/2 -left-4 z-10 transform -translate-y-1/2"
+      >
         <motion.div
           className="flex justify-center items-center bg-primary w-[35px] h-[35px] rounded-full shadow-md cursor-pointer opacity-100" // Changed from opacity-0 to opacity-100
           variants={buttonVariants}
@@ -255,7 +258,10 @@ const ExploreCategory: React.FC<ExploreCategoryProps> = ({
         </motion.div>
       </div>
 
-      <div ref={nextRef} className="category-next absolute top-1/2 -right-4 z-10 transform -translate-y-1/2">
+      <div
+        ref={nextRef}
+        className="category-next absolute top-1/2 -right-4 z-10 transform -translate-y-1/2"
+      >
         <motion.div
           className="flex justify-center items-center bg-primary w-[35px] h-[35px] rounded-full shadow-md cursor-pointer opacity-100" // Changed from opacity-0 to opacity-100
           variants={buttonVariants}
@@ -304,7 +310,7 @@ const ExploreCategory: React.FC<ExploreCategoryProps> = ({
             <SwiperSlide key={`${categoryId}-${index}`}>
               <motion.div
                 className="flex flex-col items-center cursor-pointer text-center"
-                onClick={() => handleCategoryClick(categoryId)}
+                onClick={() => handleCategoryClick(categoryId, categoryName)}
                 initial="visible"
                 animate="visible"
                 variants={itemVariants}
@@ -318,7 +324,7 @@ const ExploreCategory: React.FC<ExploreCategoryProps> = ({
                   <img
                     src={category.image}
                     alt={categoryName}
-                    className="w-20 h-20 rounded-full object-cover"
+                    className="w-20 p-2 h-20 rounded-full object-cover"
                   />
                 </div>
                 <h3 className="text-center text-sm font-medium line-clamp-2">

@@ -196,7 +196,7 @@ const NewItems = ({ products, isLoading }: ProductProps) => {
                         </span>
                       )}
                       <motion.div
-                        className="flex relative rounded-[10px] hover:shadow-xl shadow-sm h-[218px] bg-white overflow-hidden"
+                        className="flex relative p-4 rounded-[10px] hover:shadow-xl shadow-sm h-[218px] justify-center bg-white"
                         whileHover={{
                           scale: 1.05,
                           boxShadow: '0px 10px 30px rgba(0, 0, 0, 0.1)',
@@ -210,7 +210,7 @@ const NewItems = ({ products, isLoading }: ProductProps) => {
                         <img
                           src={product.image}
                           alt={product.name}
-                          className="w-full h-full object-cover rounded-t-[10px]"
+                          className="h-40 w-auto object-contain"
                         />
                       </motion.div>
                       <h3 className="text-base mt-3">{product.name}</h3>
