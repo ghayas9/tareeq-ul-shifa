@@ -32,7 +32,7 @@ const ProductCategory = () => {
   
   // States
   const [currentCategory, setCurrentCategory] = useState<any>(null);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [itemsPerPage, setItemsPerPage] = useState(50);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
@@ -493,11 +493,11 @@ const ProductCategory = () => {
                 return (
                   <div
                     key={product.id}
-                    className="flex lg:w-1/5 md:w-1/3 sm:w-1/2 w-full my-5"
+                    className="flex lg:w-1/5 md:w-1/3 w-1/2  my-5"
                   >
                     <Link href={`/products/${product?.id}`} className="w-full">
                       <div className="px-[6px] w-full h-full">
-                        <div className="relative group flex flex-col h-full">
+                        <div className="relative group flex flex-col h-full ">
                           <div className="flex relative p-4 rounded-[10px] hover:shadow-xl shadow-sm h-[218px] justify-center items-center bg-white">
                             {product.quantity === 0 && (
                               <span className="absolute top-2 left-2 bg-red-200 w-[105px] text-center flex justify-center items-center h-[24px] text-red-600 text-sm font-medium rounded">
