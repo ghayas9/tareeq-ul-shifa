@@ -193,7 +193,7 @@ const CategoryProducts: React.FC<CategorySectionProps> = ({
           <Swiper
             modules={[Navigation]}
             spaceBetween={16}
-            slidesPerView={1}
+            slidesPerView={2}
             navigation={{
               prevEl: `.cat-prev-${index}`,
               nextEl: `.cat-next-${index}`,
@@ -206,7 +206,7 @@ const CategoryProducts: React.FC<CategorySectionProps> = ({
                 slidesPerView: 2,
               },
               640: {
-                slidesPerView: 2,
+                slidesPerView: 3,
               },
               768: {
                 slidesPerView: 4,
@@ -240,7 +240,7 @@ const CategoryProducts: React.FC<CategorySectionProps> = ({
                     whileHover={{ y: -5, transition: { duration: 0.2 } }}
                   >
                     <div
-                      className="bg-white rounded-lg shadow-md p-2 h-[220px] flex flex-col cursor-pointer"
+                      className="bg-white rounded-lg shadow-md p-2 md:h-[220px] h-auto flex flex-col cursor-pointer"
                       onClick={() => router.push(`/products/${product.id}`)}
                     >
                       <div className="relative flex-shrink-0 h-32 flex items-center justify-center mb-2">
@@ -261,7 +261,7 @@ const CategoryProducts: React.FC<CategorySectionProps> = ({
                         />
                       </div>
                       <div className="flex-grow p-2">
-                        <h3 className="text-sm font-medium line-clamp-2 mb-1">
+                        <h3 className="md:text-sm text-xs font-medium line-clamp-2 mb-1">
                           {product.name}
                         </h3>
                         <p className="text-xs text-gray-500 mb-2">
@@ -274,7 +274,7 @@ const CategoryProducts: React.FC<CategorySectionProps> = ({
                               Rs {product.originalPrice}
                             </span>
                           )}
-                          <span className="text-green-600 font-semibold">
+                          <span className="text-green-600 md:text-sm text-xs font-semibold">
                             Rs {product.price}
                           </span>
                         </div>

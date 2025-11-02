@@ -105,10 +105,7 @@ const ProductDetails = () => {
                 )}
               </div>
             </div>
-
-            {/* Product Details <S></S>ection - Right Side */}
             <div className="md:w-[40%] w-11/12 space-y-6">
-              {/* Product Title */}
               <div>
                 {isLoading ? (
                   <Skeleton width={300} height={36} className="mb-4" />

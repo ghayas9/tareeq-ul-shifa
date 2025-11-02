@@ -41,7 +41,7 @@ const TopSellingCard = ({ product }: any) => {
       className="px-[6px] w-full"
     >
       <div className="relative group ">
-        <div className="flex relative mx-3 p-3 rounded-[10px] hover:shadow-xl shadow-sm h-[218px] justify-center items-center bg-white">
+        <div className="flex relative mx-3 md:p-3 p-1 rounded-[10px] hover:shadow-xl shadow-sm md:h-[218px] h-[180px] justify-center items-center bg-white">
           {product.stock === 0 && (
             <span className="absolute top-2 left-2 bg-red-200 w-[105px] text-center flex justify-center items-center h-[24px] text-red-600 text-sm font-medium rounded">
               Out of Stock
@@ -50,7 +50,7 @@ const TopSellingCard = ({ product }: any) => {
           <img
             src={product.image}
             alt={product.name}
-            className="w-[250px] h-40 rounded-t-[8px]"
+            className="md:w-[250px] w-[180px] md:h-40 h-[150px] rounded-t-[8px]"
           />
           {discount && <DiscountBadge discountPercentage={discount} />}
           <div className="absolute bottom-4 right-2 transform -translate-x-1/2 translate-y-10 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-in-out flex space-x-3">

@@ -171,7 +171,6 @@
 
 // export default TopSellingItems;
 
-
 import React, { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/router';
 import Slider from 'react-slick';
@@ -199,11 +198,9 @@ const TopSellingItems: React.FC<Props> = ({ products: initialProducts, isLoading
     const fetchTopProducts = async () => {
       try {
         setIsLoading(true);
-        // Use the improved getTopSellingProducts function
         const response = await getTopSellingProducts({ 
           limit: 10,
           status: 'active'
-          // No need to specify sort and order - the hook handles that
         });
         
         if (response?.payload?.data) {
@@ -217,11 +214,9 @@ const TopSellingItems: React.FC<Props> = ({ products: initialProducts, isLoading
       }
     };
 
-    // If we don't have initial products, fetch them
     if (!initialProducts || initialProducts.length === 0) {
       fetchTopProducts();
     } else {
-      // Use the products passed from props
       setTopProducts(initialProducts);
       setIsLoading(false);
     }
@@ -238,8 +233,8 @@ const TopSellingItems: React.FC<Props> = ({ products: initialProducts, isLoading
       const width = window.innerWidth;
       let visibleSlides = 5; // default for desktop
 
-      if (width <= 480) {
-        visibleSlides = 1;
+      if (width <= 640) {
+        visibleSlides = 2; // Changed from 1 to 2 for mobile
       } else if (width <= 768) {
         visibleSlides = 2;
       } else if (width <= 1024) {
@@ -250,13 +245,9 @@ const TopSellingItems: React.FC<Props> = ({ products: initialProducts, isLoading
       setShowArrows(topProducts.length > visibleSlides);
     };
 
-    // Initialize
     checkShowArrows();
-
-    // Add event listener for resize
     window.addEventListener('resize', checkShowArrows);
 
-    // Cleanup
     return () => {
       window.removeEventListener('resize', checkShowArrows);
     };
@@ -270,9 +261,27 @@ const TopSellingItems: React.FC<Props> = ({ products: initialProducts, isLoading
     slidesToScroll: 1,
     centerMode: false,
     responsive: [
-      { breakpoint: 1024, settings: { slidesToShow: 3, slidesToScroll: 1 } },
-      { breakpoint: 768, settings: { slidesToShow: 2, slidesToScroll: 1 } },
-      { breakpoint: 480, settings: { slidesToShow: 1, slidesToScroll: 1 } },
+      { 
+        breakpoint: 1024, 
+        settings: { 
+          slidesToShow: 3, 
+          slidesToScroll: 1 
+        } 
+      },
+      { 
+        breakpoint: 768, 
+        settings: { 
+          slidesToShow: 2, 
+          slidesToScroll: 1 
+        } 
+      },
+      { 
+        breakpoint: 640, // Changed from 480 to 640 (Tailwind's sm breakpoint)
+        settings: { 
+          slidesToShow: 2, // Changed from 1 to 2
+          slidesToScroll: 1 
+        } 
+      },
     ],
   };
 
@@ -294,7 +303,7 @@ const TopSellingItems: React.FC<Props> = ({ products: initialProducts, isLoading
         {skeletonPlaceholders.map((_, index) => (
           <div
             key={index}
-            className="flex-shrink-0 w-[100%] sm:w-[50%] md:w-[35%] lg:w-[25%] px-2"
+            className="flex-shrink-0 w-[50%] sm:w-[50%] md:w-[35%] lg:w-[25%] px-2"
           >
             <div className="relative group">
               <div>

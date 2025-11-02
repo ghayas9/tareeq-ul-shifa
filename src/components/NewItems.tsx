@@ -28,9 +28,9 @@ const NewItems = ({ products, isLoading }: ProductProps) => {
     slidesToScroll: 1,
     centerMode: false,
     responsive: [
-      { breakpoint: 1024, settings: { slidesToShow: 3, slidesToScroll: 1 } },
-      { breakpoint: 768, settings: { slidesToShow: 2, slidesToScroll: 1 } },
-      { breakpoint: 480, settings: { slidesToShow: 1, slidesToScroll: 1 } },
+      { breakpoint: 1024, settings: { slidesToShow: 4, slidesToScroll: 1 } },
+      { breakpoint: 768, settings: { slidesToShow: 3, slidesToScroll: 1 } },
+      { breakpoint: 480, settings: { slidesToShow: 2, slidesToScroll: 1 } },
     ],
   };
 
@@ -196,7 +196,7 @@ const NewItems = ({ products, isLoading }: ProductProps) => {
                         </span>
                       )}
                       <motion.div
-                        className="flex relative p-4 rounded-[10px] hover:shadow-xl shadow-sm h-[218px] justify-center bg-white"
+                        className="flex relative md:p-3 p-2 rounded-[10px] hover:shadow-xl shadow-sm md:h-[218px] h-[180px] justify-center bg-white"
                         whileHover={{
                           scale: 1.05,
                           boxShadow: '0px 10px 30px rgba(0, 0, 0, 0.1)',
@@ -210,13 +210,13 @@ const NewItems = ({ products, isLoading }: ProductProps) => {
                         <img
                           src={product.image}
                           alt={product.name}
-                          className="h-40 w-auto object-contain"
+                          className="md:h-40 h-[150px] w-auto object-contain"
                         />
                       </motion.div>
-                      <h3 className="text-base mt-3">{product.name}</h3>
+                      <h3 className="md:text-base text-sm mt-3">{product.name}</h3>
                       <div className="mt-1">
                         <motion.span
-                          className="text-normalGreen font-semibold text-lg ml-2"
+                          className="text-normalGreen font-semibold md:text-lg text-sm ml-2"
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           transition={{ delay: 0.2 }}

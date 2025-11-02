@@ -163,12 +163,12 @@ const Header = () => {
             <div className="w-12 h-[73px] flex items-center justify-center rounded-full">
               <Logo />
             </div>
-            <div className="">
+            {/* <div className="">
               <span className="font-semibold border-b-2 text-black text-sm">
                 Tareeq-Ul-Shifa Pharmacy
               </span>
               <p className="text-[8px]">PATH TO HEALING</p>
-            </div>
+            </div> */}
           </motion.div>
 
           {/* Desktop Search */}
